@@ -1,7 +1,10 @@
 const mysqlConnection = require('../connection')
 
-module.exports.findAll = (param, callback) => {
-  const sql = `SELECT * FROM files`
+module.exports.findAll = (page = 1, callback) => {
+  const numPerPage = 10
+  const skip = (page - 1) * numPerPage
+  const limit = skip + ',' + numPerPage
+  const sql = `SELECT * FROM files LIMIT ` + limit
   mysqlConnection.query(sql, (err, result) => {
     callback(err, result)
   })

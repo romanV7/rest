@@ -1,12 +1,5 @@
 const mysqlConnection = require('../connection')
 
-module.exports.findAll = (param, callback) => {
-  const sql = `SELECT * FROM users`
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result)
-  })
-}
-
 module.exports.createUser = (file, callback) => {
   const sql = 'INSERT INTO users SET ?'
   mysqlConnection.query(sql, file, (err, result) => {

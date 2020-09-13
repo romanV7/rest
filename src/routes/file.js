@@ -85,8 +85,8 @@ Router.post('/upload', upload.single('image'), (req, res) => {
   })
 })
 
-Router.post('/list', (req, res) => {
-  File.findAll(null, (err, result) => {
+Router.get('/', (req, res) => {
+  File.findAll(req.query.list_size, (err, result) => {
     if (err) console.log(err)
     res.send(result)
   })
