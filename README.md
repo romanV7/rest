@@ -7,3 +7,4 @@
 
 ## Notice
 password for database is `root` 
+before uploading files make sure that directory `uploads` is created
