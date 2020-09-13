@@ -52,6 +52,14 @@ Router.put('/update/:id', upload.single('image'), (req, res) => {
     filePath: req.file.path,
     data: new Date()
   }
+  File.findById(req.params.id, (err, result) => {
+    if (err) console.log(err)
+    const filePath = result[0].filePath
+    deleteFile(filePath, err => {
+      if (err) console.log(err)
+      console.log('deleted from local folder')
+    })
+  })
   File.updateFile(file, req.params.id, (err, result) => {
     if (err) console.log(err)
     res.send(result)

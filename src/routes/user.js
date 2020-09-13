@@ -28,7 +28,6 @@ Router.post('/signup', (req, res) => {
 
 Router.post('/signin', (req, res) => {
   User.findByUsername(req.body.name, (err, userByName) => {
-    // if (!userByName.length) return res.status(401).json({ message: 'Auth failed' })
     const { password, email, id } = userByName[0]
     bcrypt.compare(req.body.password, password, (err, result) => {
       if (err) return res.status(401).json({ message: 'Auth failed' })
@@ -93,7 +92,7 @@ Router.get('/info/:name',  (req, res) => {
   })
 })
 
-Router.get('/all',  (req, res) => {
+Router.get('/all', (req, res) => {
   RefreshToken.findAll(null, (err, result) => {
     if (err) return res.status(500).json({ error: err })
     res.send(result)
