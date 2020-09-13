@@ -1,5 +1,6 @@
 const express = require('express')
 const multer = require('multer')
+const fs = require('fs')
 const {deleteFile} = require('../shared/remove')
 const {downloadFile} = require('../shared/upload')
 const File = require('../services/file')
@@ -84,7 +85,30 @@ Router.get('/download/:id', (req, res) => {
   File.findById(req.params.id, (err, result) => {
     if (err) console.log(err)
     const filePath = result[0].filePath
-    downloadFile(res, filePath)
+    let readStream;
+    try {
+      if (fs.existsSync(filePath)) {
+        readStream = fs.createReadStream(filePath);
+        readStream.on('open', () => {
+          res.set({
+            'Content-Type': 'application/octet-stream',
+            'Content-Disposition': `attachment; filename="${filePath}"`,
+          });
+          readStream.pipe(res);
+        });
+        readStream.on('end', () => {
+          console.log('file downloaded successfully!')
+        });
+        readStream.on('error', err => {
+          res.end(err);
+        });
+      } else {
+        console.log(`File "${filePath}" not found`)
+        return
+        }
+     } catch (err) {
+       console.log(err)
+     }
   })
 })
 
