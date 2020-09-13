@@ -8,7 +8,7 @@ const { generateAccessToken, generateRefreshToken, checkToken } = require('../sh
 
 const Router = express.Router()
 
-Router.post('/register', (req, res) => {
+Router.post('/signup', (req, res) => {
   User.findByEmail(req.body.email, (err, userByEmail) => {
     if (userByEmail && userByEmail.length >= 1) return res.status(409).json({ message: 'Mail exsists' })
   })
@@ -26,7 +26,7 @@ Router.post('/register', (req, res) => {
   })
 })
 
-Router.post('/login', (req, res) => {
+Router.post('/signin', (req, res) => {
   User.findByUsername(req.body.name, (err, userByName) => {
     // if (!userByName.length) return res.status(401).json({ message: 'Auth failed' })
     const { password, email, id } = userByName[0]
@@ -64,11 +64,9 @@ Router.post('/logout', (req, res) => {
   })
 })
 
-Router.post('/token', (req, res) => {
+Router.post('/signin/token', (req, res) => {
   const refreshTokenPayload = req.body.token
-  console.log({refreshTokenPayload})
   RefreshToken.findTokenByPayload(refreshTokenPayload, (err, refreshToken) => {
-    console.log({refreshToken})
     if (!refreshTokenPayload) return res.sendStatus(401)
     if (!refreshToken) return res.sendStatus(403)
     checkToken(refreshTokenPayload, (err, user) => {
