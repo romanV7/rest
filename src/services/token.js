@@ -8,21 +8,21 @@ module.exports.createToken = (token, callback) => {
 }
 
 module.exports.findTokenByUserId = (id, callback) => {
-  const sql = `SELECT * FROM tokens WHERE refresh = ${id}`
+  const sql = `SELECT * FROM tokens WHERE refresh = '${id}'`
   mysqlConnection.query(sql, (err, result) => {
     callback(err, result)
   })
 }
 
 module.exports.findTokenByPayload = (token, callback) => {
-  const sql = `SELECT * FROM tokens WHERE payload = ${token}`
+  const sql = `SELECT * FROM tokens WHERE payload = '${token}'`
   mysqlConnection.query(sql, (err, result) => {
     callback(err, result)
   })
 }
 
 module.exports.deleteToken = (token, callback) => {
-  const sql = `DELETE FROM tokens WHERE payload = ${token}`
+  const sql = `DELETE FROM tokens WHERE payload = '${token}'`
   mysqlConnection.query(sql, (err, result) => {
     callback(err, result)
   })

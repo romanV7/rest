@@ -55,14 +55,20 @@ Router.post('/login', (req, res) => {
 
 Router.post('/logout', (req, res) => {
   RefreshToken.deleteToken(req.body.token, (err, result) => {
-    if (err) return res.status(500).json({ error: err })
-    return res.sendStatus(204)
+    if (err) {
+      res.status(500).json(err)
+    } else if (!result) {
+      res.status(404).json()
+    }
+    res.status(204).json(result)
   })
 })
 
 Router.post('/token', (req, res) => {
   const refreshTokenPayload = req.body.token
+  console.log({refreshTokenPayload})
   RefreshToken.findTokenByPayload(refreshTokenPayload, (err, refreshToken) => {
+    console.log({refreshToken})
     if (!refreshTokenPayload) return res.sendStatus(401)
     if (!refreshToken) return res.sendStatus(403)
     checkToken(refreshTokenPayload, (err, user) => {
