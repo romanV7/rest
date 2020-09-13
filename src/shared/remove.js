@@ -1,11 +1,15 @@
-const fs = require('fs');
+const fs = require('fs')
 
-module.exports.deleteFile = (filePath, callback) => {
+const deleteFile = (filePath, callback) => {
   fs.unlink(filePath, (error) => {
     if (!error) {
-      callback(false);
+      callback(false)
     } else {
-      callback('Error deleting the file');
+      callback('Error deleting the file')
     }
   })
-};
+}
+
+module.exports = {
+  deleteFile
+}

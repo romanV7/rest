@@ -42,7 +42,7 @@ Router.get('/delete/:id', (req, res) => {
         res.send(result)
       })
     } else {
-      return res.status(400).json({message: 'no such file'})
+      return res.status(400).json({message: 'no file to delete'})
     }
   })
 })
@@ -58,15 +58,19 @@ Router.put('/update/:id', upload.single('image'), (req, res) => {
   }
   File.findById(req.params.id, (err, result) => {
     if (err) console.log(err)
-    const filePath = result[0].filePath
-    deleteFile(filePath, err => {
-      if (err) console.log(err)
-      console.log('deleted from local folder')
-    })
-  })
-  File.updateFile(file, req.params.id, (err, result) => {
-    if (err) console.log(err)
-    res.send(result)
+    if (result.length) {
+      const filePath = result[0].filePath
+      deleteFile(filePath, err => {
+        if (err) console.log(err)
+        console.log('deleted from local folder')
+      })
+      File.updateFile(file, req.params.id, (err, result) => {
+        if (err) console.log(err)
+        res.send(result)
+      })
+    } else {
+      return res.status(400).json({message: 'no file to update'})
+    }
   })
 })
 
