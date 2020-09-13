@@ -2,7 +2,6 @@ const express = require('express')
 const multer = require('multer')
 const fs = require('fs')
 const {deleteFile} = require('../shared/remove')
-const {downloadFile} = require('../shared/upload')
 const File = require('../services/file')
 
 const Router = express.Router()
