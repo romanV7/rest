@@ -1,12 +1,8 @@
 const express = require('express')
 const multer = require('multer')
-const fs = require('fs')
-const util = require('util');
-const mysqlConnection = require('../connection')
 const {deleteFile} = require('../shared/remove')
 const {downloadFile} = require('../shared/upload')
-
-const query = util.promisify(mysqlConnection.query).bind(mysqlConnection);
+const File = require('../services/file')
 
 const Router = express.Router()
 
@@ -24,18 +20,15 @@ const upload = multer({
   limits: { fileSize: 1024 * 1024 * 5},
 })
 
-Router.get('/:id', async (req, res) => {
-  const sql = `SELECT * FROM files WHERE id = ${req.params.id}`
-  const result = mysqlConnection.query(sql, (err, result) => {
+Router.get('/:id', (req, res) => {
+  File.findById(req.params.id, (err, result) => {
     if (err) console.log(err)
-    console.log({result})
     res.send(result)
   })
 })
 
 Router.get('/delete/:id', (req, res) => {
-  const sql1 = `SELECT * FROM files WHERE id = ${req.params.id}`
-  mysqlConnection.query(sql1, (err, result) => {
+  File.findById(req.params.id, (err, result) => {
     if (err) console.log(err)
     const filePath = result[0].filePath
     deleteFile(filePath, err => {
@@ -43,8 +36,7 @@ Router.get('/delete/:id', (req, res) => {
       console.log('deleted from local folder')
     })
   })
-  const sql = `DELETE FROM files WHERE id = ${req.params.id}`
-  mysqlConnection.query(sql, (err, result) => {
+  File.deleteById(req.params.id, (err, result) => {
     if (err) console.log(err)
     console.log(result)
     res.send(result)
@@ -52,8 +44,6 @@ Router.get('/delete/:id', (req, res) => {
 })
 
 Router.put('/update/:id', upload.single('image'), (req, res) => {
-  console.log(req.params.id)
-  const sql = `UPDATE files SET ? WHERE id = ${req.params.id}`
   const file = {
     name: req.file.originalname,
     extention: req.file.originalname.split('.')[1],
@@ -62,15 +52,13 @@ Router.put('/update/:id', upload.single('image'), (req, res) => {
     filePath: req.file.path,
     data: new Date()
   }
-  mysqlConnection.query(sql, file, (err, result) => {
+  File.updateFile(file, req.params.id, (err, result) => {
     if (err) console.log(err)
     res.send(result)
   })
 })
 
 Router.post('/upload', upload.single('image'), (req, res) => {
-  console.log(req.file)
-  const sql = 'INSERT INTO files SET ?'
   const file = {
     name: req.file.originalname,
     extention: req.file.originalname.split('.')[1],
@@ -79,27 +67,25 @@ Router.post('/upload', upload.single('image'), (req, res) => {
     filePath: req.file.path,
     data: new Date()
   }
-  mysqlConnection.query(sql, file, (err, rows, fields) => {
+  File.createFile(file, (err, result) => {
     if (err) console.log(err)
-    res.send(rows)
+    res.send(result)
   })
 })
 
 Router.post('/list', (req, res) => {
-  mysqlConnection.query("select * from files", (err, rows, fields) => {
+  File.findAll(null, (err, result) => {
     if (err) console.log(err)
-    res.send(rows)
+    res.send(result)
   })
 })
 
 Router.get('/download/:id', (req, res) => {
-  const sql = `SELECT * FROM files WHERE id = ${req.params.id}`
-  mysqlConnection.query(sql, (err, result) => {
+  File.findById(req.params.id, (err, result) => {
     if (err) console.log(err)
     const filePath = result[0].filePath
     downloadFile(res, filePath)
   })
 })
-
 
 module.exports = Router
