@@ -4,6 +4,7 @@ const fs = require('fs')
 const util = require('util');
 const mysqlConnection = require('../connection')
 const {deleteFile} = require('../shared/remove')
+const {downloadFile} = require('../shared/upload')
 
 const query = util.promisify(mysqlConnection.query).bind(mysqlConnection);
 
@@ -90,5 +91,15 @@ Router.post('/list', (req, res) => {
     res.send(rows)
   })
 })
+
+Router.get('/download/:id', (req, res) => {
+  const sql = `SELECT * FROM files WHERE id = ${req.params.id}`
+  mysqlConnection.query(sql, (err, result) => {
+    if (err) console.log(err)
+    const filePath = result[0].filePath
+    downloadFile(res, filePath)
+  })
+})
+
 
 module.exports = Router
