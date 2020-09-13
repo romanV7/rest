@@ -77,13 +77,6 @@ Router.post('/signin/token', (req, res) => {
   })
 })
 
-Router.get('/info/:name',  (req, res) => {
-  User.findByUsername(req.params.name, (err, result) => {
-    if (err) return res.status(500).json({ error: err })
-    res.send(result)
-  })
-})
-
 Router.get('/info/:id',  (req, res) => {
   User.findUserById(req.params.id, (err, result) => {
     if (err) return res.status(500).json({ error: err })

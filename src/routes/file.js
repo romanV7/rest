@@ -30,16 +30,20 @@ Router.get('/:id', (req, res) => {
 Router.get('/delete/:id', (req, res) => {
   File.findById(req.params.id, (err, result) => {
     if (err) console.log(err)
-    const filePath = result[0].filePath
-    deleteFile(filePath, err => {
-      if (err) console.log(err)
-      console.log('deleted from local folder')
-    })
-  })
-  File.deleteById(req.params.id, (err, result) => {
-    if (err) console.log(err)
-    console.log(result)
-    res.send(result)
+    if (result.length) {
+      const filePath = result[0].filePath
+      deleteFile(filePath, err => {
+        if (err) console.log(err)
+        console.log('deleted from local folder')
+      })
+      File.deleteById(req.params.id, (err, result) => {
+        if (err) console.log(err)
+        console.log(result)
+        res.send(result)
+      })
+    } else {
+      return res.status(400).json({message: 'no such file'})
+    }
   })
 })
 
