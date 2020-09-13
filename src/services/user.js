@@ -15,14 +15,14 @@ module.exports.createUser = (file, callback) => {
 }
 
 module.exports.updateUser = (file, id, callback) => {
-  const sql = `UPDATE users SET ? WHERE id = ${id}`
+  const sql = `UPDATE users SET ? WHERE id = '${id}'`
   mysqlConnection.query(sql, file, (err, result) => {
     callback(err, result)
   })
 }
 
 module.exports.findUserById = (id, callback) => {
-  const sql = `SELECT * FROM users WHERE id = ${id}`
+  const sql = `SELECT * FROM users WHERE id = '${id}'`
   mysqlConnection.query(sql, (err, result) => {
     callback(err, result)
   })
@@ -36,14 +36,14 @@ module.exports.findByUsername = (username, callback) => {
 }
 
 module.exports.findByEmail = (email, callback) => {
-  const sql = `SELECT * FROM users WHERE email = ${email}`
+  const sql = `SELECT * FROM users WHERE email = '${email}'`
   mysqlConnection.query(sql, (err, result) => {
     callback(err, result)
   })
 }
 
 module.exports.deleteUserById = (id, callback) => {
-  const sql = `DELETE FROM users WHERE id = ${id}`
+  const sql = `DELETE FROM users WHERE id = '${id}'`
   mysqlConnection.query(sql, (err, result) => {
     callback(err, result)
   })

@@ -10,18 +10,17 @@ const Router = express.Router()
 
 Router.post('/signup', (req, res) => {
   User.findByEmail(req.body.email, (err, userByEmail) => {
-    if (userByEmail && userByEmail.length >= 1) return res.status(409).json({ message: 'Mail exsists' })
-  })
-
-  User.findByUsername(req.body.name, (err, userByName) => {
-    if (userByName && userByName.length >= 1) return res.status(409).json({ message: 'Name exsists' })
-  })
-
-  bcrypt.hash(req.body.password, +process.env.IV, (err, hash) => {
-    if (err) return res.status(500).json({ error: err })
-    User.createUser({name: req.body.name, email: req.body.email, password: hash}, (err, result) => {
+    if (err) {
+      res.status(500).json(err)
+    } else if (userByEmail.length >= 1) {
+      return res.status(409).json({ message: 'Mail exists' })
+    }
+    bcrypt.hash(req.body.password, +process.env.IV, (err, hash) => {
       if (err) return res.status(500).json({ error: err })
-      return res.status(200).json(result)
+      User.createUser({name: req.body.name, email: req.body.email, password: hash}, (err, result) => {
+        if (err) return res.status(500).json({ error: err })
+        return res.status(200).json(result)
+      })
     })
   })
 })
@@ -78,13 +77,6 @@ Router.post('/signin/token', (req, res) => {
   })
 })
 
-Router.get('/info',  (req, res) => {
-  User.findAll(null, (err, result) => {
-    if (err) return res.status(500).json({ error: err })
-    res.send(result)
-  })
-})
-
 Router.get('/info/:name',  (req, res) => {
   User.findByUsername(req.params.name, (err, result) => {
     if (err) return res.status(500).json({ error: err })
@@ -92,8 +84,8 @@ Router.get('/info/:name',  (req, res) => {
   })
 })
 
-Router.get('/all', (req, res) => {
-  RefreshToken.findAll(null, (err, result) => {
+Router.get('/info/:id',  (req, res) => {
+  User.findUserById(req.params.id, (err, result) => {
     if (err) return res.status(500).json({ error: err })
     res.send(result)
   })

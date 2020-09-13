@@ -3,7 +3,7 @@ SET FOREIGN_KEY_CHECKS=0; DROP TABLE users; SET FOREIGN_KEY_CHECKS=1;
 
 CREATE TABLE users (
   id  INTEGER PRIMARY KEY AUTO_INCREMENT,
-  name varchar(255) NOT NULL UNIQUE,
+  name varchar(255) NOT NULL,
   email varchar(255) NOT NULL UNIQUE,
   password varchar(255) NOT NULL
 ) ENGINE InnoDB;
