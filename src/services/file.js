@@ -1,3 +1,5 @@
+'use strict'
+
 const mysqlConnection = require('../connection')
 
 const findAll = (page = 1, callback) => {
