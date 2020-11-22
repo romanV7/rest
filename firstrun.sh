@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "Start running..."
 
 docker run -d \
